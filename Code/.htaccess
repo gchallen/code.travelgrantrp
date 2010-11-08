@@ -1,0 +1,4 @@
+Order deny,allow
+Deny from all
+
+php_flag magic_quotes_gpc off

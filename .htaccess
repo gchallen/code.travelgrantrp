@@ -1,0 +1,31 @@
+# These directives limit how large a paper can be uploaded.
+# post_max_size should be >= upload_max_filesize.
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+# Turn off the hateful magic_quotes_gpc.
+php_flag magic_quotes_gpc off
+
+# Default to UTF-8 (most scripts will override this with <meta>).
+AddDefaultCharset UTF-8
+
+
+# Prevent access to SCM and README directories.
+<FilesMatch "^(CVS|\.svn|\.git|README|LICENSE|.*\.sh)$">
+Order allow,deny
+Deny from all
+</FilesMatch>
+
+# Add .php to suffixless URLs.
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteBase /
+RewriteCond %{REQUEST_URI} ^(.*doc)(/[^/]*)$
+RewriteRule ^doc/.*$ %1.php%2 [L]
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteCond %{REQUEST_URI} ^(.*)$
+RewriteRule ^.*$ %1.php [L]
+</IfModule>
+
+# Uncomment this line to grant access only via https.  Requires mod_ssl.
+# SSLRequireSSL

@@ -1,0 +1,191 @@
+==========================================
+= Travel Grant Review Package (TGRP) 0.1 =
+==========================================
+
+Modified from HotCRP 2.30 by Anh Le
+TGRP Site: http://www.ics.uci.edu/~anhml/software.html#TGRP
+HotCRP Site: http://www.cs.ucla.edu/~kohler/hotcrp/
+
+---------------------
+--- Prerequisites ---
+---------------------
+
+TGRP requires the following software.  Tested versions are in parentheses.
+
+* Apache			http://apache.org/
+  (You may be able to use another web server that works with PHP.)
+* PHP version 5 or higher	http://php.net/
+  - Including MySQL and GD support
+  - PHP 5.2 or higher recommended
+* MySQL version 5 or higher	http://mysql.org/
+* PHP PEAR extensions		http://pear.php.net/
+
+Apache is preloaded on most Linux distributions.  You may need to install
+additional packages for PHP, MySQL, GD, and PEAR, such as:
+
+* Fedora Linux: php-mysql, php-pear, php-gd
+* Debian Linux: php5-common, php5-gd, php5-mysql, php-pear, 
+  libapache2-mod-php5 (or libapache-mod-php5 for Apache 1.x)
+* Ubuntu Linux: php5-common, php5-gd, php5-mysql, php-pear,
+  libapache2-mod-php5 (or libapache-mod-php5 for Apache 1.x), and a package
+  for SMTP support, such as postfix
+
+You may need to restart the Apache web server after installing these
+packages ("sudo apachectl graceful" or "sudo apache2ctl graceful").
+
+
+---------------------
+--- Configuration ---
+---------------------
+
+* Database configuration
+
+  - Decide on a name for your database (no spaces allowed).
+
+  - Run "sudo Code/createdb.sh" to create the database.  You may also run
+    "sudo Code/createdb.sh OPTIONS" to pass options to MySQL, such as
+    --user and --password.  Run "Code/createdb.sh --help" for more
+    information.
+
+    e.g. sudo Code/createdb.sh -uroot -psecret
+
+* Site configuration
+
+  - Edit "Code/options.inc", which is annotated to guide you.
+    ("Code/createdb.sh" creates this file based on "Code/distoptions.inc".)
+	 Mailing from the server requires a working email on the server. This
+	 might require setting up a Mail Trasport Agent (e.g. sendmail).
+
+  - Redirect Apache so your server URL will point at the TGRP directory.
+    (If you get an Error 500, see "Configuration notes".)  This will
+    generally require adding a <Directory> for the TGRP directory, and an
+    Alias redirecting a particular URL to that directory.  For example,
+    this section of httpd.conf makes the "/testconf" URL point at a TGRP
+    installation in /home/anh/tgrp.
+
+	<Directory "/home/anh/tgrp">
+	        Options Indexes Includes FollowSymLinks MultiViews
+	        AllowOverride all
+	        Order allow,deny
+	        Allow from all
+	</Directory>
+	Alias /testconf /home/anh/tgrp
+
+    Note that the first argument to Alias should NOT end in a slash.  The
+    "AllowOverride all" directive is required.
+
+  - Update the systemwide setting for PHP's 'session.gc_maxlifetime'
+    configuration variable.  This provides an upper bound on TGRP session
+    lifetimes (the amount of idle time before a user is logged out
+    automatically).  On Unix machines, systemwide PHP settings are often
+    stored in '/etc/php.ini' ('/etc/php5/apache2/php.ini' on Debian LAMP).
+	 The suggested value for this setting is 86400, e.g., 24 hours:
+
+	 session.gc_maxlifetime = 86400
+
+  - Disable PHP's magic quotes so that TGRP won't complain about it by
+    changing the following line in your 'php.ini' (from On to Off):
+
+	 magic_quotes_gpc = Off
+
+
+  - An administration account has already been created:
+
+    Email: admin@conf
+    Password: admin
+
+    Sign in with this account and change the default email and password.
+
+    If your server configuration doesn't allow .htaccess files to set
+    options, Apache will report an "Error 500" when you try to load TGRP.
+    Change your Apache configuration to "AllowOverride All" in the TGRP
+    directory, as our example does above.
+
+    If your server shows you a directory listing rather than the TGRP
+    homepage, add the following line to the <Directory>:
+
+	        DirectoryIndex index.html index.php
+
+  - You can set up everything else through the settings on the web site 
+    itself. Please see the --- QUICK START GUIDE --- below.
+
+* Configuration notes
+
+  - Uploaded applications and reviews are limited in size by several PHP
+    configuration variables, set by default to 20 megabytes in the base
+    directory's ".htaccess".  You may want to lower them.
+
+  - TGRP PHP scripts can take a lot of memory, particularly if they're
+    doing things like generating MIME-encoded mail messages.  By default
+    TGRP sets the PHP memory limit to 128MB.
+
+  - TGRP uses Apache's mod_expires module; consider enabling it.
+
+  - TGRP sets MySQL's max_allowed_packet variable based on the 
+    upload_max_filesize set in the base directory's ".htaccess".
+
+
+
+-------------------------
+--- Quick Start Guide ---
+-------------------------
+
+
+1. Settings:
+ 
+   - Home -> Settings -> Messages: Change conference abbreviation, 
+	  name, and greetings.
+
+   - Home -> Settings -> Submission: Open site for submission and 
+	  set deadline.
+
+   - Home -> Settings -> Reviews: Open site for review
+
+   - Home -> Settings -> Decisions: Make sure the applicants can't 
+	  see BOTH the decisions and granted amount, yet. (i.e., both 
+	  selected options should be "No" at the moment).
+
+2. Create Grant Chair (and other) Accounts:
+
+   - Home -> Users -> Create Account: 
+     + Grant Chair: Select 'Grant chair', CHECK 'System Admin'
+	  + System Admin: Select 'Applicant', CHECK 'System Admin'
+	  + Applicant: Select 'Applicant', UNCHECK 'System Admin'
+
+3. Review Process:
+
+   - Home -> All applications/Student applications/Postdoc applications 
+	  -> (a specific) application:
+
+     a) Download the resume, cover letter, and supervisor letter to 
+	  review by clicking on the pdf icons.
+
+     b) After the review, click on "Edit granted amount" and enter the 
+	  amount. Even if the application is rejected, PUT 0 in the amount; 
+	  this is to record that this application is reviewed. Then CLICK 
+	  'save changes'.
+
+     c) On the top left panel, click on Decision, then select granted 
+	  or rejected.
+
+     d) There is a comment panel where grant chairs can put their 
+	  comments to discuss about the application. This comment section 
+	  should be use for discussion instead of the review section.
+
+	  *** Repeat steps a-d for other applications ***
+
+4. Release Result: (When the review process is completed)
+
+   - Home -> Settings -> Decisions: Select "Yes" for BOTH options, 
+	  i.e., allowing the applicants to learn the decisions and granted 
+	  amounts by logging in and checking their applications.
+	  
+   - Home -> Send mail: Use the prepared templates to send 
+	  notifications to granted/rejected/all applicants.
+
+---------------
+--- License ---
+---------------
+
+Open-source. See the LICENSE file in the distribution for full 
+license terms.

@@ -1,0 +1,23 @@
+===========================================
+= Travel Grant Review Package (TGRP) News =
+===========================================
+
+Version 0.1 (First Release) 26.May.2009
+
+* Forked from HotCRP Version 2.30
+
+* Submission :: Allow 3 application types: Student, PostDoc, 
+  Geodiversity (as required by Sigcomm'09)
+
+* Submission :: Support direct upload of Resume, Cover 
+  Letter, and Reference Letter.
+
+* Review :: Add filters to review subsets of applications. 
+  4 filters are avaiable on the review home screen: All, 
+  Student, PostDoc, Geodiversity applications.
+
+* Review :: Old review field (from HotCRP) is used to add 
+  Granted Amount, and old comment field (from HotCRP) is 
+  used to allow discussion among Grant Chairs
+
+* Mail :: Can mail to accepted/rejected/general applicants.
